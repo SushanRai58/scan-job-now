@@ -54,23 +54,35 @@ const Index = () => {
 
     setAnalyzing(true);
 
-    // Simulate AI analysis (in production, this would call your ML API)
-    setTimeout(() => {
-      const mockResult = {
-        classification: Math.random() > 0.5 ? "legitimate" : "fake",
-        confidence: Math.floor(Math.random() * 30) + 70,
-        keywords: ["Remote Work", "No Interview", "Immediate Start", "Wire Transfer"],
-        explanation: "This job posting contains several red flags including requests for upfront payment and lack of company verification."
-      };
-
-      setResult(mockResult);
-      setAnalyzing(false);
-
-      toast({
-        title: "Analysis complete",
-        description: `Job classified as ${mockResult.classification}`,
+    try {
+      const { data, error } = await supabase.functions.invoke('analyze-job', {
+        body: {
+          jobInput: jobInput.trim(),
+          jobUrl: jobUrl.trim()
+        }
       });
-    }, 2000);
+
+      if (error) throw error;
+
+      if (data.success) {
+        setResult(data.data);
+        toast({
+          title: "Analysis complete",
+          description: `Job classified as ${data.data.classification}`,
+        });
+      } else {
+        throw new Error(data.error || 'Analysis failed');
+      }
+    } catch (error) {
+      console.error('Analysis error:', error);
+      toast({
+        variant: "destructive",
+        title: "Analysis failed",
+        description: error instanceof Error ? error.message : "Failed to analyze job posting. Please try again.",
+      });
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   return (
