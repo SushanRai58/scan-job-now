@@ -33,16 +33,6 @@ const Auth = () => {
       return;
     }
 
-    if (!email.endsWith(".edu") && !email.includes("student")) {
-      toast({
-        variant: "destructive",
-        title: "Invalid Email",
-        description: "Please use your college email address (.edu domain).",
-      });
-      setLoading(false);
-      return;
-    }
-
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -106,7 +96,7 @@ const Auth = () => {
         <Card>
           <CardHeader>
             <CardTitle>Student Access</CardTitle>
-            <CardDescription>Sign up or sign in with your college email</CardDescription>
+            <CardDescription>Sign up or sign in with your email</CardDescription>
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="signin" className="w-full">
@@ -120,13 +110,13 @@ const Auth = () => {
                   <div className="space-y-2">
                     <Label htmlFor="signin-email">
                       <Mail className="inline w-4 h-4 mr-2" />
-                      College Email
+                      Email Address
                     </Label>
                     <Input
                       id="signin-email"
                       name="signin-email"
                       type="email"
-                      placeholder="your.name@college.edu"
+                      placeholder="your.email@example.com"
                       required
                     />
                   </div>
@@ -153,16 +143,15 @@ const Auth = () => {
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">
                       <Mail className="inline w-4 h-4 mr-2" />
-                      College Email
+                      Email Address
                     </Label>
                     <Input
                       id="signup-email"
                       name="signup-email"
                       type="email"
-                      placeholder="your.name@college.edu"
+                      placeholder="your.email@example.com"
                       required
                     />
-                    <p className="text-xs text-muted-foreground">Use your .edu email address</p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">
